@@ -1,0 +1,70 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>封装tab</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        ul{
+            list-style:none;
+        }
+        a{
+            color:inherit;
+            text-decoration: none;
+        }
+        .content{
+            width:800px;
+            margin:0 auto;
+        }
+        .content .tab{
+            height: 34px;
+            background-color: rgb(233,82,100);
+            line-height: 34px;
+            text-align: center;
+            color:#fff;
+        }
+        .content .tab li{
+            float:left;
+            width:20%;
+            cursor: pointer;
+        }
+        .main{
+            display: none;
+            width:800px;
+            height:200px;
+            background-color: rgb(233,199,3);
+            margin-bottom: 5px;
+        }
+        .active{
+            background-color: rgb(123,84,100);
+        }
+        .selected{
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <div class="tab">
+            <ul>
+                <li class="tab-item active"><a href="#">tab1</a></li>
+                <li class="tab-item"><a href="#">tab2</a></li>
+                <li class="tab-item"><a href="#">tab3</a></li>
+            </ul>
+        </div>
+        <div class="products">
+            <div class="main selected"><a href="#">tab内容1</a></div>
+            <div class="main"><a href="#">tab内容222</a></div>
+            <div class="main"><a href="#">tab内容33333</a></div>
+        </div>
+    </div>
+</body>
+<script src="./js/tab.js"></script>
+<script src="./js/autoTab.js"></script>
+</html>
