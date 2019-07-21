@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>06状态模式面向对象的封装</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        input {
+            outline: none;
+            border: 1px solid #333;
+        }
+
+        .form {
+            width: 400px;
+            margin: 100px auto;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .row {
+            display: flex;
+        }
+
+        .cell {
+            padding: 0 10px;
+            line-height: 55px;
+        }
+
+        .f2 {
+            flex: 2;
+        }
+
+        .f3 {
+            flex: 3;
+        }
+
+        .control {
+            display: inline-block;
+            width: 100%;
+            height: 34px;
+            padding: 6px 12px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            vertical-align: middle;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 6px 12px;
+            margin-bottom: 0;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            color: #333;
+            background-color: #fff;
+            border-color: #ccc;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="form">
+        <form action="" id="registerForm" method="get">
+            <div class="row">
+                <div class="cell f2">请输入用户名：</div>
+                <div class="cell f3"><input type="text" class="control" name="userName"></div>
+            </div>
+            <div class="row">
+                <div class="cell f2">请输入密码：</div>
+                <div class="cell f3"><input type="text" class="control" name="password"></div>
+            </div>
+            <div class="row">
+                <div class="cell f2">请输入手机号码：</div>
+                <div class="cell f3"><input type="text" class="control" name="phoneNumber" ></div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="cell f2"></div>
+                <div class="cell f3">
+                    <input type="submit" class="btn" value="提交">
+                </div>
+            </div>
+
+        </form>
+    </div>
+</body>
+<script>
+    //获得元素
+    let form = document.querySelector('#registerForm');
+    //设置对象来存储验证的方法
+    let regMethods = {
+        //验证空
+        regEmpty: function(value, errMsg){
+            if(value === ''){
+                return errMsg;
+            }
+        },
+        //验证长度
+        regLength: function(value, len, errMsg){
+            if(value.length < len){
+                return errMsg;
+            }
+        },
+        //验证手机号码
+        regMoblie: function(value, errMsg){
+            if(! /(^1[3|5|8][0-9]{9}$)/.test(value)){
+                return errMsg;
+            }
+        }
+    };
+    //设置构造函数来存储验证的函数
+    function RegInfo (){
+        this.regFuns = [];
+    };
+    //添加验证规则 创建函数存入数组中
+    RegInfo.prototype.add = function(dom, rules){
+        for(let i = 0; i < rules.length; i++){
+            let rule = rules[i];
+            let fn = function(){
+                //分割rule.regFunsName成数组
+                let splitArr = rule.regFunsName.split(':');
+                //获得第一个数据
+                let funsName = splitArr.shift();
+                //将元素的内容从头插入
+                splitArr.unshift(dom.value);
+                //将提示插入到数组后边
+                splitArr.push(rule.errMsg);
+                // console.log(funsName);
+                //返回
+                return regMethods[funsName].apply(dom, splitArr);
+            }
+            //当函数从后插入到regFuns数组
+            this.regFuns.push(fn);
+        }
+    };
+    //验证数组
+    RegInfo.prototype.start = function(){
+        for(let i = 0; i < this.regFuns.length; i++){
+            let errMsg = this.regFuns[i]();
+            if(errMsg){
+                return errMsg;
+            }
+        }
+    };
+    
+    let reg = new RegInfo();
+    reg.add(form.userName,[{
+        regFunsName : 'regEmpty',
+        errMsg : '用户名不能为空'
+    }
+    ,
+    {
+        regFunsName : 'regLength:6',
+        errMsg : '用户名长度不能小于6'
+    }]);
+    reg.add(form.password,[{
+        regFunsName : 'regEmpty',
+        errMsg : '密码不能为空'
+    }
+    ,
+    {
+        regFunsName : 'regLength:8',
+        errMsg : '密码长度不能小于8'
+    }]);
+    reg.add(form.phoneNumber, [{
+        regFunsName : 'regEmpty',
+        errMsg : '手机号码不能为空'
+    }
+    ,
+    {
+        regFunsName : 'regLength:11',
+        errMsg : '手机号码长度为11'
+    }
+    ,
+    {
+        regFunsName : 'regMoblie',
+        errMsg : '请正确输入手机号码'
+    }]);
+
+    let btn = document.querySelector('.btn');
+    btn.onclick = function(e){
+        // e.preventDefault()
+        let errMsg = reg.start();
+        if(errMsg){
+            e.preventDefault();
+            alert(errMsg);
+        }
+    }   
+
+</script>
+</html>

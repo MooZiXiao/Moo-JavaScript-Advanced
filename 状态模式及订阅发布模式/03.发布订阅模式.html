@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>02.发布订阅模式</title>
+</head>
+<body>
+    
+  <input type="button" value="注册" id="btn"> 
+
+</body>
+<script>
+    ;(function(){
+
+        //设置一个对象来存储
+        let ctrlS = {};
+        
+        //
+        function add (key, fn){
+            if(!ctrlS[key]){
+                ctrlS[key] = [];
+            }
+            ctrlS[key].push(fn);
+        }
+
+        function trigger(key){
+            let ctrlSArr = ctrlS[key];
+            for(let i = 0; i < ctrlSArr.length; i++){
+                ctrlSArr[i]();
+            } 
+        }
+
+
+        window.Events = {
+            add : add,
+            trigger : trigger
+        }
+
+        Events.add('registerSc',function(){
+            console.log('注册成功');
+        })
+        Events.add('registerSc',function(){
+            console.log('回到首页');
+        })
+
+        let btn = document.querySelector('#btn');
+        btn.onclick = function(){
+
+            //模拟服务器
+            setTimeout(()=>{
+                let res = {
+                    status : 200,
+                    // msg : '注册成功'
+                }
+                if(res.status === 200){
+                    Events.trigger('registerSc')
+                }
+            },2200)
+        }
+    })();
+</script>
+</html>
